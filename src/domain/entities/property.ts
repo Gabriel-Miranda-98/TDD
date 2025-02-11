@@ -1,3 +1,5 @@
+import { DateRange } from "../value_objects/dateRange";
+
 interface PropertyProps {
   id: string;
   title: string;
@@ -53,5 +55,15 @@ export class Property {
 
   validateMaxGuests(maxGuests: number):void  {
     if(maxGuests > this.maxGuests) throw new Error(`Número máximo de hóspedes excedido, o número máximo de hóspedes é ${this.maxGuests}`);
+  }
+
+  calculateTotalPrice(dateRange:DateRange): number {
+    const PERCENT_DISCOUNT = 0.9;
+    const numberOfNights = dateRange.totalNights
+    let totalPricePerNight = this.basePricePerNight * numberOfNights;
+    if (numberOfNights >= 7) {
+      totalPricePerNight *= PERCENT_DISCOUNT;
+    }
+    return totalPricePerNight;
   }
 }

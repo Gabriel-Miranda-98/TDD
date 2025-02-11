@@ -1,3 +1,4 @@
+import { DateRange } from "../value_objects/dateRange";
 import { Property } from "./property";
 
 describe("Property Entity", () => {
@@ -76,5 +77,56 @@ describe("Property Entity", () => {
       property.validateMaxGuests(5);
     }).toThrow(new Error(`Número máximo de hóspedes excedido, o número máximo de hóspedes é ${property.maxGuests}`));
   })
+
+  it("Não deve aplicar nenhum desconto se a quantidade de diárias for menor que 7", () => {
+
+    const property = new Property({
+      id:'1',
+      title: 'Casa de Praia',
+      description: 'Casa muito bonita',
+      maxGuests: 4,
+      basePricePerNight: 200,
+    })
+
+    const dateRange = new DateRange(new Date('2021-10-10'), new Date('2021-10-15'));
+
+
+
+    expect(property.calculateTotalPrice(dateRange)).toBe(1000);
+  })
+
+
+  it.each
+  ([{
+    dateRange: new DateRange(new Date('2021-10-10'), new Date('2021-10-17')),
+    expectedTotalPrice: 1260
+  }, {
+    dateRange: new DateRange(new Date('2021-10-10'), new Date('2021-10-24')),
+    expectedTotalPrice: 2520
+
+  },
+  {
+    dateRange: new DateRange(new Date('2021-10-10'), new Date('2021-10-31')),
+    expectedTotalPrice: 3780
+  }
+])("Deve aplicar um desconto de 10% se a quantidade de diárias for maior ou igual a 7", ({dateRange,expectedTotalPrice}:{
+  dateRange: DateRange;
+  expectedTotalPrice: number;
+}) => {
+
+    const property = new Property({
+      id:'1',
+      title: 'Casa de Praia',
+      description: 'Casa muito bonita',
+      maxGuests: 4,
+      basePricePerNight: 200,
+    })
+
+
+
+    expect(property.calculateTotalPrice(dateRange)).toBe(expectedTotalPrice);
+  })
+
+
 
 });
