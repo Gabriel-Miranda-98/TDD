@@ -14,6 +14,16 @@ export class Property {
   private readonly _basePricePerNight: number;
 
   constructor({ id, title, description, maxGuests, basePricePerNight }: PropertyProps) {
+    if (!title) {
+      throw new Error('O campo title é obrigatório');
+    }
+
+    if (maxGuests < 1) {
+      throw new Error('O campo maxGuests deve ser maior que 0');
+    }
+    if (basePricePerNight <= 0) {
+      throw new Error('O campo basePricePerNight deve ser maior que 0');
+    }
     this._id = id;
     this._title = title;
     this._description = description;
@@ -39,5 +49,9 @@ export class Property {
 
   get basePricePerNight(): number {
     return this._basePricePerNight;
+  }
+
+  validateMaxGuests(maxGuests: number):void  {
+    if(maxGuests > this.maxGuests) throw new Error(`Número máximo de hóspedes excedido, o número máximo de hóspedes é ${this.maxGuests}`);
   }
 }
