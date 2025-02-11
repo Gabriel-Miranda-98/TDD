@@ -3,13 +3,7 @@ export class DateRange {
   private readonly _end: Date;
 
   constructor(start: Date, end: Date) {
-    if (start > end) {
-      throw new Error('A data de início deve ser menor que a data de fim');
-    }
-
-    if(start === end) {
-      throw new Error('A data de início deve ser menor que a data de fim');
-    }
+   this.validateDateRange(start, end);
 
     this._start = start;
     this._end = end;
@@ -34,6 +28,14 @@ export class DateRange {
   }
 
 
+ private validateDateRange(start: Date, end: Date): void {
+    if (start > end) {
+      throw new Error('A data de início deve ser menor que a data de fim');
+    }
 
+    if(start === end) {
+      throw new Error('A data de início deve ser menor que a data de fim');
+    }
+ }
 
 }
