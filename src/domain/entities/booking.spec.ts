@@ -177,7 +177,7 @@ describe("Booking Entity", () => {
       guestsCount: 1,
     })
 
-    const checkInDate = new Date('2021-01-01')
+    const checkInDate = new Date('2020-12-31')
 
     booking.cancel(checkInDate)
 
@@ -209,7 +209,7 @@ describe("Booking Entity", () => {
       guestsCount: 1,
     })
 
-    const checkInDate = new Date('2021-01-02')
+    const checkInDate = new Date('2021-01-01')
 
     booking.cancel(checkInDate)
 
@@ -246,6 +246,69 @@ describe("Booking Entity", () => {
 
     expect(booking.status).toBe("CANCELLED")
     expect(booking.totalPrice).toBe(0)
+  })
+
+  it("Deve lançar um erro se tentar cancelar uma reserva que já foi cancelada", () => {
+    const property = new Property({
+      id: "1",
+      title: "Casa de praia",
+      description: "Casa de praia em Fortaleza",
+      basePricePerNight: 100,
+      maxGuests: 1,
+    })
+
+    const user = new User({
+      id: "1",
+      name: "John Doe",
+    })
+
+    const dateRange = new DateRange(new Date("2021-01-10"), new Date("2021-01-20"))
+    const booking = new Booking({
+      id:'1',
+      property,
+      user,
+      dateRange,
+      guestsCount: 1,
+    })
+
+    const checkInDate = new Date('2021-01-02')
+
+    booking.cancel(checkInDate)
+
+    expect(() => {
+      booking.cancel(checkInDate)
+    }).toThrow(new Error("A Reserva já está cancelada"))
+  })
+
+  it("Deve lançar um erro se tentar cancelar uma reserva que já foi feito o check-in", () => {
+    const property = new Property({
+      id: "1",
+      title: "Casa de praia",
+      description: "Casa de praia em Fortaleza",
+      basePricePerNight: 100,
+      maxGuests: 1,
+    })
+
+    const user = new User({
+      id: "1",
+      name: "John Doe",
+    })
+
+    const dateRange = new DateRange(new Date("2021-01-10"), new Date("2021-01-20"))
+    const booking = new Booking({
+      id:'1',
+      property,
+      user,
+      dateRange,
+      guestsCount: 1,
+    })
+
+    const checkInDate = new Date('2021-01-10')
+
+
+    expect(() => {
+      booking.cancel(checkInDate)
+    }).toThrow(new Error("Não é possível cancelar a reserva, o check-in já foi realizado"))
   })
 
 
