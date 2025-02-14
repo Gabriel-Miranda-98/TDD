@@ -154,6 +154,101 @@ describe("Booking Entity", () => {
   })
 
 
+  it("Deve cancelar um reserva sem reembolso, quando falta 24h ou menos para o check-in", () => {
+    const property = new Property({
+      id: "1",
+      title: "Casa de praia",
+      description: "Casa de praia em Fortaleza",
+      basePricePerNight: 100,
+      maxGuests: 1,
+    })
+
+    const user = new User({
+      id: "1",
+      name: "John Doe",
+    })
+
+    const dateRange = new DateRange(new Date("2021-01-01"), new Date("2021-01-10"))
+    const booking = new Booking({
+      id:'1',
+      property,
+      user,
+      dateRange,
+      guestsCount: 1,
+    })
+
+    const checkInDate = new Date('2021-01-01')
+
+    booking.cancel(checkInDate)
+
+    expect(booking.status).toBe("CANCELLED")
+    expect(booking.totalPrice).toBe(810)
+  })
+
+
+  it("Deve cancelar um reserva com reembolso de 50%, quando falta mais de 24h para o check-in", () => {
+    const property = new Property({
+      id: "1",
+      title: "Casa de praia",
+      description: "Casa de praia em Fortaleza",
+      basePricePerNight: 100,
+      maxGuests: 1,
+    })
+
+    const user = new User({
+      id: "1",
+      name: "John Doe",
+    })
+
+    const dateRange = new DateRange(new Date("2021-01-03"), new Date("2021-01-10"))
+    const booking = new Booking({
+      id:'1',
+      property,
+      user,
+      dateRange,
+      guestsCount: 1,
+    })
+
+    const checkInDate = new Date('2021-01-02')
+
+    booking.cancel(checkInDate)
+
+    expect(booking.status).toBe("CANCELLED")
+    expect(booking.totalPrice).toBe(315)
+  })
+
+  it("Deve cancelar um reserva com reembolso de 100%, quando falta mais de 7 dias para o check-in", () => {
+    const property = new Property({
+      id: "1",
+      title: "Casa de praia",
+      description: "Casa de praia em Fortaleza",
+      basePricePerNight: 100,
+      maxGuests: 1,
+    })
+
+    const user = new User({
+      id: "1",
+      name: "John Doe",
+    })
+
+    const dateRange = new DateRange(new Date("2021-01-10"), new Date("2021-01-20"))
+    const booking = new Booking({
+      id:'1',
+      property,
+      user,
+      dateRange,
+      guestsCount: 1,
+    })
+
+    const checkInDate = new Date('2021-01-02')
+
+    booking.cancel(checkInDate)
+
+    expect(booking.status).toBe("CANCELLED")
+    expect(booking.totalPrice).toBe(0)
+  })
+
+
 
 
 })

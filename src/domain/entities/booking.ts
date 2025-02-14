@@ -5,7 +5,7 @@ import { User } from "./user"
 enum BookingStatus{
   PENDING = 'PENDING',
   CONFIRMED = 'CONFIRMED',
-  CANCELED = 'CANCELED',
+  CANCELLED = 'CANCELLED',
 }
 
 interface IBooking{
@@ -23,7 +23,7 @@ export class Booking{
   private readonly _user: User
   private readonly _dateRange: DateRange
   private readonly _guestsCount: number
-  private readonly _totalPrice: number
+  private  _totalPrice: number
   private _status: BookingStatus = BookingStatus.PENDING
   constructor({
     id,
@@ -77,6 +77,24 @@ export class Booking{
 
   get status(){
     return this._status
+  }
+
+  cancel(currentDate: Date){
+     const PERCENT_REFUND = 0.5
+      const diffDays = Math.ceil(Math.abs(this._dateRange.startDate.getTime() - currentDate.getTime())/ (1000 * 60 * 60 * 24));
+
+    if(diffDays >0 && diffDays <=6){
+      this._status = BookingStatus.CANCELLED
+      this._totalPrice *= PERCENT_REFUND
+
+      return
+
+    } else if(diffDays >6){
+      this._status = BookingStatus.CANCELLED
+      this._totalPrice = 0
+      return
+    }
+    this._status = BookingStatus.CANCELLED
   }
 
 
