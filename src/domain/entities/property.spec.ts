@@ -1,5 +1,7 @@
 import { DateRange } from "../value_objects/dateRange";
+import { Booking } from "./booking";
 import { Property } from "./property";
+import { User } from "./user";
 
 describe("Property Entity", () => {
 
@@ -126,6 +128,79 @@ describe("Property Entity", () => {
 
     expect(property.calculateTotalPrice(dateRange)).toBe(expectedTotalPrice);
   })
+
+  it("Deve ser possível adicionar uma reserva a propriedade", () => {
+
+    const property = new Property({
+      id:'1',
+      title: 'Casa de Praia',
+      description: 'Casa muito bonita',
+      maxGuests: 4,
+      basePricePerNight: 200,
+    })
+
+    const user = new User({
+      id:'1',
+      name: 'John Doe'
+    })
+
+    const dateRange = new DateRange(new Date('2021-10-10'), new Date('2021-10-15'));
+    const booking = new Booking({
+      id:'1',
+      property,
+      user,
+      dateRange,
+      guestsCount: 4,
+    })
+    property.addBooking(booking)
+
+    expect(property.bookings.length).toBe(1);
+  }
+)
+
+  it("Deve retornar um array vazio se não houver reservas", () => {
+
+    const property = new Property({
+      id:'1',
+      title: 'Casa de Praia',
+      description: 'Casa muito bonita',
+      maxGuests: 4,
+      basePricePerNight: 200,
+    })
+
+    expect(property.bookings).toEqual([]);
+  })
+
+  it("Deve retornar todas as reservas da propriedade", () => {
+
+    const property = new Property({
+      id:'1',
+      title: 'Casa de Praia',
+      description: 'Casa muito bonita',
+      maxGuests: 4,
+      basePricePerNight: 200,
+    })
+
+    const user = new User({
+      id:'1',
+      name: 'John Doe'
+    })
+
+    const dateRange = new DateRange(new Date('2021-10-10'), new Date('2021-10-15'));
+    const booking = new Booking({
+      id:'1',
+      property,
+      user,
+      dateRange,
+      guestsCount: 4,
+    })
+    property.addBooking(booking)
+
+    expect(property.bookings).toEqual([booking]);
+  })
+
+
+
 
 
 

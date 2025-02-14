@@ -1,4 +1,5 @@
 import { DateRange } from "../value_objects/dateRange";
+import { Booking } from "./booking";
 
 interface PropertyProps {
   id: string;
@@ -14,6 +15,7 @@ export class Property {
   private readonly _description: string;
   private readonly _maxGuests: number;
   private readonly _basePricePerNight: number;
+  private readonly _bookings: Booking[] = [];
 
   constructor({ id, title, description, maxGuests, basePricePerNight }: PropertyProps) {
     if (!title) {
@@ -65,5 +67,21 @@ export class Property {
       totalPricePerNight *= PERCENT_DISCOUNT;
     }
     return totalPricePerNight;
+  }
+
+  addBooking(booking:Booking): void {
+    this._bookings.push(booking);
+  }
+
+  get bookings(): Booking[] {
+    return [...this._bookings];
+  }
+
+  isAvailable(dateRange:DateRange): boolean {
+    const isAvailable = this._bookings.some(booking => {
+      return booking.status === 'CONFIRMED' && booking.dateRange.overlaps(dateRange)
+    })
+
+    return isAvailable
   }
 }
