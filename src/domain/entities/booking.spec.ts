@@ -1,9 +1,15 @@
+import { CancellationService } from "../services/cancellation/cancellationService"
 import { DateRange } from "../value_objects/dateRange"
 import { Booking } from "./booking"
 import { Property } from "./property"
 import { User } from "./user"
 
 describe("Booking Entity", () => {
+  let servicoCancelamento: CancellationService;
+
+  beforeEach(() => {
+    servicoCancelamento = new CancellationService();
+  });
   it("Deve criar uma instância de Booking com todos os atributos", () => {
     const property = new Property({
       id: "1",
@@ -178,8 +184,7 @@ describe("Booking Entity", () => {
     })
 
     const checkInDate = new Date('2020-12-31')
-
-    booking.cancel(checkInDate)
+    servicoCancelamento.cancel(booking, checkInDate)
 
     expect(booking.status).toBe("CANCELLED")
     expect(booking.totalPrice).toBe(810)
@@ -211,7 +216,8 @@ describe("Booking Entity", () => {
 
     const checkInDate = new Date('2021-01-01')
 
-    booking.cancel(checkInDate)
+    servicoCancelamento.cancel(booking, checkInDate)
+
 
     expect(booking.status).toBe("CANCELLED")
     expect(booking.totalPrice).toBe(315)
@@ -242,7 +248,8 @@ describe("Booking Entity", () => {
 
     const checkInDate = new Date('2021-01-02')
 
-    booking.cancel(checkInDate)
+    servicoCancelamento.cancel(booking, checkInDate)
+
 
     expect(booking.status).toBe("CANCELLED")
     expect(booking.totalPrice).toBe(0)
@@ -273,10 +280,12 @@ describe("Booking Entity", () => {
 
     const checkInDate = new Date('2021-01-02')
 
-    booking.cancel(checkInDate)
+    servicoCancelamento.cancel(booking, checkInDate)
+
 
     expect(() => {
-      booking.cancel(checkInDate)
+      servicoCancelamento.cancel(booking, checkInDate)
+
     }).toThrow(new Error("A Reserva já está cancelada"))
   })
 
@@ -307,7 +316,8 @@ describe("Booking Entity", () => {
 
 
     expect(() => {
-      booking.cancel(checkInDate)
+      servicoCancelamento.cancel(booking, checkInDate)
+
     }).toThrow(new Error("Não é possível cancelar a reserva, o check-in já foi realizado"))
   })
 

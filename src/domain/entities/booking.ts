@@ -2,7 +2,7 @@ import { DateRange } from "../value_objects/dateRange"
 import { Property } from "./property"
 import { User } from "./user"
 
-enum BookingStatus{
+export enum BookingStatus{
   PENDING = 'PENDING',
   CONFIRMED = 'CONFIRMED',
   CANCELLED = 'CANCELLED',
@@ -79,31 +79,15 @@ export class Booking{
     return this._status
   }
 
-  cancel(currentDate: Date){
-    if(this._status === BookingStatus.CANCELLED){
-      throw new Error('A Reserva já está cancelada')
-    }
-
-    if(currentDate >= this._dateRange.startDate){
-      throw new Error('Não é possível cancelar a reserva, o check-in já foi realizado')
-    }
-
-
-     const PERCENT_REFUND = 0.5
-      const diffDays = Math.ceil(Math.abs(this._dateRange.startDate.getTime() - currentDate.getTime())/ (1000 * 60 * 60 * 24));
-    if(diffDays >=2 && diffDays <=6){
-      this._status = BookingStatus.CANCELLED
-      this._totalPrice *= PERCENT_REFUND
-
-      return
-
-    } else if(diffDays >6){
-      this._status = BookingStatus.CANCELLED
-      this._totalPrice = 0
-      return
-    }
-    this._status = BookingStatus.CANCELLED
+  updateStatus(status: BookingStatus){
+    this._status = status
   }
+
+  updateTotalPrice(totalPrice: number){
+    this._totalPrice = totalPrice
+  }
+
+
 
 
 }
